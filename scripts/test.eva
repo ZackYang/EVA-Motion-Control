@@ -1,0 +1,15 @@
+# capture == cap
+# capture's argument is the index number of a image for stitching into one huge image
+# goto == gt
+# goto X, Y    X max value is 248,  Y max value is 238
+# The "wait" is waiting for XX  ms
+init
+goto 100, 200
+capture 0
+gt 200, 200
+cap 2
+wait 1000
+goto 200, 200
+capture 3
+goto 200, 100
+end
