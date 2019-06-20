@@ -3,14 +3,14 @@ GEM
   specs:
     em-http-server (0.1.8)
       eventmachine
-    eventmachine (1.2.7-x64-mingw32)
+    eventmachine (1.2.7)
 
 PLATFORMS
-  x64-mingw32
+  ruby
 
 DEPENDENCIES
-  em-http-server
-  eventmachine
+  em-http-server!
+  eventmachine!
 
 BUNDLED WITH
    2.0.2

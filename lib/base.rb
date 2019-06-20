@@ -67,14 +67,17 @@ module EVAMotionControl
         # # you have all the http headers in this hash
         # puts  @http.inspect
 
-        pattern_name = @http_request_uri.match(/[a-z\_]+/).to_s
-        task = EVAMotionControl::Task.new(pattern_name)
-        task.start
         response = EM::DelegatedHttpResponse.new(self)
-        response.status = 200
-        response.content_type 'text/html'
-        response.content = EVAMotionControl.states.to_s
-        response.send_response
+
+        controller = EVAMotionControl::Controller.new(response, {
+          method:       @http_request_method,
+          uri:          @http_request_uri,
+          query_string: @http_query_string,
+          content:      @http_content,
+          content_type: @http[:content_type]
+        })
+        result = controller.process
+        result.send_response
       end
 
       def http_request_errback e
