@@ -2,6 +2,7 @@ require 'em/pure_ruby'
 require 'em-http-server'
 require_relative "./task"
 require_relative "./data_parser"
+require_relative "./controller"
 
 module EVAMotionControl
   DB = Array.new(255, 0)
@@ -30,6 +31,11 @@ module EVAMotionControl
   end
 
   def self.states
+    @states ||= {
+      "working" => false,
+      "error"   => "",
+      "ready"   => true
+    }
     @states.to_hash
   end
 
@@ -76,8 +82,8 @@ module EVAMotionControl
           content:      @http_content,
           content_type: @http[:content_type]
         })
-        result = controller.process
-        result.send_response
+        controller.process
+        controller.response.send_response
       end
 
       def http_request_errback e

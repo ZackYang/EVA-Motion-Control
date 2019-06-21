@@ -77,6 +77,9 @@ module EVAMotionControl
 
     def current_step_fail
       puts "Current step failed"
+      EVAMotionControl.set_state :working, false
+      EVAMotionControl.set_state :ready,   true
+      EVAMotionControl.set_state :error,   "Prev Task failed"
     end
 
     def update attributes
