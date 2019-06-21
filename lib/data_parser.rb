@@ -1,5 +1,3 @@
-require_relative "./action"
-
 module EVAMotionControl
   class DataParser
     # X定位激活	M0.4
@@ -45,15 +43,43 @@ module EVAMotionControl
       Y_COMPLETED:  16, #16 Y定位状态参量  M1.6
       LIGHT:        20, #20 背光控制系统  M2.0
       # 以下为双精度数
-      X_POSITION:   59, #309 X移动位置	   VD9
-      X_SPEED:      63, #313 X移动速度	   VD13
-      Y_POSITION:   83, #333 Y移动位置	   VD33
-      Y_SPEED:      87  #337 Y移动速度	   VD37
+      X_POSITION:   300, #309 X移动位置	   VD9
+      X_SPEED:      302, #313 X移动速度	   VD13
+      Y_POSITION:   304, #333 Y移动位置	   VD33
+      Y_SPEED:      306  #337 Y移动速度	   VD37
     }
+
+    OUTPUT_INDICES = {
+      Y_REST_STATE:  0, # Y搜参状态	M0.0
+      X_ACTIVATION:  1, # X轴激活	M0.1
+      X_READY:       2, # X完成状态	M0.2
+      X_DIRECTION:   3, # X当前方向	M0.3
+      X_TRIGGER:     4,  #4 X定位激活	   M0.4
+      X_COMPLETED:   6,  #6 X定位状态参量	M0.6
+      Y_TRIGGER:     14, #14 Y定位激活	   M1.4
+      Y_COMPLETED:   16, #16 Y定位状态参量  M1.6
+      LIGHT:         20, #20 背光控制系统  M2.0
+      # 以下为双精度数
+      X_POSITION:    200, #309 X移动位置	   VD9
+      X_SPEED:       202, #313 X移动速度	   VD13
+      Y_POSITION:    204, #333 Y移动位置	   VD33
+      Y_SPEED:       206 #337 Y移动速度	   VD37
+    }
+
+    DOUBLE_VARIABLES = [
+      :X_POSITION,
+      :X_SPEED,
+      :Y_POSITION,
+      :Y_SPEED
+    ]
+
 
     MAPPING = []
     INPUT_INDICES.each do |index_name, index|
-      MAPPING.push([index, Module.const_get("EVAMotionControl::Action::#{index_name}")])
+      MAPPING.push([index, OUTPUT_INDICES[index_name.to_sym]])
+      if DOUBLE_VARIABLES.include?(index_name.to_sym)
+        MAPPING.push([index + 1, OUTPUT_INDICES[index_name.to_sym] + 1])
+      end
     end
 
     def initialize data
