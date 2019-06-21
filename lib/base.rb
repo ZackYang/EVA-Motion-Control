@@ -5,7 +5,13 @@ require_relative "./data_parser"
 require_relative "./controller"
 
 module EVAMotionControl
-  DB = Array.new(255, 0)
+  class FakeConnection
+    def send_data data
+      puts data
+    end
+  end
+
+  DB = Array.new(400, 0)
   INPUT_DB = []
 
   def self.root
@@ -17,7 +23,8 @@ module EVAMotionControl
   end
 
   def self.connection
-    return @connection
+    return @connection if @connection
+    FakeConnection.new
   end
 
   def self.set_state key, value
