@@ -77,19 +77,29 @@ module EVAMotionControl
 
     def current_step_fail
       puts "Current step failed"
+      EVAMotionControl.set_state :working, false
+      EVAMotionControl.set_state :ready,   true
+      EVAMotionControl.set_state :error,   "Prev Task failed"
     end
 
     def update attributes
       return unless attributes
       attributes.each do |index, value|
-        EVAMotionControl::DB[index] = value
+        EVAMotionControl::DB[index] = value.to_i
+        if value.is_a?(Float)
+          decimal_part = value.round(2).to_s.split(".").last.to_i
+          EVAMotionControl::DB[index + 1] = decimal_part
+        end
       end
       write
     end
 
     def write
       tmp_DB = EVAMotionControl::DB.clone
-      tmp_DB = tmp_DB.map { |val| val.to_s(16) }.pack("H*"*tmp_DB.size)
+      tmp_DB = tmp_DB.map do |val|
+        puts val
+        val.to_s(16)
+      end.pack("h"*tmp_DB.size)
       EVAMotionControl.connection.send_data tmp_DB
     end
 

@@ -2,9 +2,16 @@ require 'em/pure_ruby'
 require 'em-http-server'
 require_relative "./task"
 require_relative "./data_parser"
+require_relative "./controller"
 
 module EVAMotionControl
-  DB = Array.new(255, 0)
+  class FakeConnection
+    def send_data data
+      puts data
+    end
+  end
+
+  DB = Array.new(400, 0)
   INPUT_DB = []
 
   def self.root
@@ -16,7 +23,8 @@ module EVAMotionControl
   end
 
   def self.connection
-    return @connection
+    return @connection if @connection
+    FakeConnection.new
   end
 
   def self.set_state key, value
@@ -30,6 +38,11 @@ module EVAMotionControl
   end
 
   def self.states
+    @states ||= {
+      "working" => false,
+      "error"   => "",
+      "ready"   => true
+    }
     @states.to_hash
   end
 
@@ -76,8 +89,8 @@ module EVAMotionControl
           content:      @http_content,
           content_type: @http[:content_type]
         })
-        result = controller.process
-        result.send_response
+        controller.process
+        controller.response.send_response
       end
 
       def http_request_errback e
