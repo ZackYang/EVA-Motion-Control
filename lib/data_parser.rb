@@ -95,6 +95,7 @@ module EVAMotionControl
 
     def parse data
       data.unpack("C*").each_with_index do |value, index|
+        puts value
         EVAMotionControl::INPUT_DB[index] = value
       end
     end
